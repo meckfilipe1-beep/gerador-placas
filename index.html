@@ -609,9 +609,10 @@ function salvarPDF(){
   const area = document.querySelector('.area-impressao');
   
   area.style.display = 'block';
-  area.style.position = 'absolute';
-  area.style.left = '-9999px';
+  area.style.position = 'fixed';
+  area.style.left = '0';
   area.style.top = '0';
+  area.style.zIndex = '-1';
   area.style.width = '210mm';
   area.style.height = '297mm';
   area.style.margin = '0';
@@ -629,7 +630,11 @@ function salvarPDF(){
     html2canvas: {
       scale: 3,
       useCORS: true,
-      backgroundColor: '#ffffff'
+      backgroundColor: '#ffffff',
+      scrollX: 0,
+      scrollY: 0,
+      windowWidth: area.offsetWidth,
+      windowHeight: area.offsetHeight
     },
     jsPDF: {
       orientation: 'portrait',
@@ -645,14 +650,28 @@ function salvarPDF(){
       area.style.display = '';
       area.style.position = '';
       area.style.left = '';
+      area.style.top = '';
+      area.style.zIndex = '';
       area.style.width = '';
       area.style.height = '';
+      area.style.margin = '';
+      area.style.padding = '';
+      area.style.background = '';
     })
     .catch(erro => {
       console.error('Erro ao gerar PDF:', erro);
       alert('Se der erro, use o botão "Imprimir" e escolha "Salvar como PDF" na janela que abrir!');
       document.querySelectorAll('.peso').forEach(p => p.style.height = '');
       area.style.display = '';
+      area.style.position = '';
+      area.style.left = '';
+      area.style.top = '';
+      area.style.zIndex = '';
+      area.style.width = '';
+      area.style.height = '';
+      area.style.margin = '';
+      area.style.padding = '';
+      area.style.background = '';
     });
 }
 
