@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Placas Preço - Formato Quadrado A4</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#6d28d9">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Placas">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  padding:14px;
+  background:linear-gradient(160deg,#312e81 0%,#6d28d9 45%,#db2777 100%);
+  max-width:760px;
+  margin:0 auto;
+  font-family:Arial,Helvetica,sans-serif;
+  min-height:100vh;
+}
+
+/* === TOPO DO APP === */
+.app-topo{
+  text-align:center;
+  margin-bottom:16px;
+  padding:18px 10px 6px;
+}
+.app-topo .selo{
+  width:56px;height:56px;
+  margin:0 auto 10px;
+  border-radius:16px;
+  background:linear-gradient(135deg,#f59e0b,#f43f5e);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:22px;color:#fff;
+  box-shadow:0 8px 20px rgba(244,63,94,.55);
+}
+.app-topo h1{
+  font-size:26px;
+  background:linear-gradient(90deg,#fde047,#f472b6);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  letter-spacing:.5px;
+}
+.app-topo p{color:#f1f5f9;font-size:14px;margin-top:4px;}
+
+/* === CARD DE CONTROLES === */
+.controles{
+  background:#fff;
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 10px 30px rgba(15,23,42,.08);
+  margin-bottom:18px;
+}
+.rotulo{
+  display:block;
+  font-weight:800;
+  font-size:13px;
+  color:#7c3aed;
+  margin:14px 0 6px;
+}
+.rotulo:first-child{margin-top:0;}
+
+.chips{display:flex;gap:8px;}
+.chip{
+  flex:1;
+  padding:10px 0;
+  border:2px solid #ddd6fe;
+  border-radius:12px;
+  background:#fff;
+  font-size:15px;
+  font-weight:800;
+  color:#6d28d9;
+  cursor:pointer;
+  transition:all .15s ease;
+}
+.chip.ativo{
+  border-color:#f43f5e;
+  background:linear-gradient(135deg,#8b5cf6,#ec4899);
+  color:#fff;
+  box-shadow:0 6px 16px rgba(236,72,153,.5);
+}
+
+.seg{
+  display:flex;
+  gap:8px;
+  background:#f1f5f9;
+  padding:4px;
+  border-radius:12px;
+}
+.seg-btn{
+  flex:1;
+  padding:10px 0;
+  border:none;
+  border-radius:9px;
+  background:transparent;
+  font-size:14px;
+  font-weight:700;
+  color:#475569;
+  cursor:pointer;
+  transition:all .15s ease;
+}
+.seg-btn.ativo{
+  background:#fff;
+  color:#d946ef;
+  box-shadow:0 2px 6px rgba(15,23,42,.12);
+}
+
+/* === CAMPOS POR PLACA === */
+.placa-campo{
+  background:#fff;
+  border:1px solid #eef0f4;
+  border-radius:14px;
+  padding:12px;
+  margin-top:10px;
+}
+.placa-titulo{
+  font-weight:900;
+  font-size:13px;
+  color:#db2777;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  margin-bottom:8px;
+}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+.grid2:first-child{margin-top:0;}
+.grid2 input{
+  width:100%;
+  padding:11px;
+  border:1px solid #dbe1ea;
+  border-radius:10px;
+  font-size:15px;
+  font-weight:700;
+  color:#1e1b4b;
+  text-transform:uppercase;
+  outline:none;
+  transition:border .15s ease, box-shadow .15s ease;
+}
+.inp-marca{
+  font-weight:900;
+  font-style:italic;
+  letter-spacing:.5px;
+}
+.grid2 input::placeholder{font-weight:700;color:#94a3b8;}
+.grid2 input:focus{
+  border-color:#d946ef;
+  box-shadow:0 0 0 3px rgba(217,70,239,.25);
+}
+
+.medida-box{
+  display:flex;
+  align-items:stretch;
+  gap:4px;
+  background:#f1f5f9;
+  border:1px solid #e2e8f0;
+  border-radius:12px;
+  padding:4px;
+  position:relative;
+}
+.medida-box .seg-pequeno{
+  display:flex;
+  border:1px solid #dbe1ea;
+  border-radius:9px;
+  overflow:hidden;
+}
+.medida-box .seg-p{
+  padding:0 9px;
+  border:none;
+  background:#f1f5f9;
+  font-weight:800;
+  font-size:13px;
+  color:#475569;
+  cursor:pointer;
+  transition:background .15s ease, color .15s ease;
+}
+.medida-box .seg-p.ativo{
+  background:linear-gradient(135deg,#8b5cf6,#ec4899);
+  color:#fff;
+}
+.medida-box input{
+  flex:1;
+  min-width:0;
+  border-radius:9px;
+  background:#fff;
+}
+.medida-box input:focus{
+  box-shadow:none;
+}
+.medida-box .input-wrap{
+  position:relative;
+  flex:1;
+  min-width:0;
+  display:flex;
+}
+.medida-box .input-wrap input{width:100%;}
+.medida-box .unid{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  left:0;
+  display:none;
+  font-weight:700;
+  font-size:14px;
+  color:#64748b;
+  pointer-events:none;
+  white-space:nowrap;
+}
+.medida-box:focus-within{
+  border-color:#d946ef;
+  box-shadow:0 0 0 3px rgba(217,70,239,.25);
+}
+
+/* === BOTOES === */
+.btn{
+  width:100%;
+  padding:14px;
+  margin-top:12px;
+  border:none;
+  border-radius:12px;
+  font-size:16px;
+  font-weight:800;
+  cursor:pointer;
+  transition:transform .12s ease, box-shadow .12s ease;
+}
+.btn:active{transform:scale(.98);}
+.btn.primario{
+  background:linear-gradient(135deg,#8b5cf6,#ec4899);
+  color:#fff;
+  box-shadow:0 8px 20px rgba(236,72,153,.5);
+}
+.btn.primario:hover{box-shadow:0 10px 24px rgba(236,72,153,.6);}
+.btn.secundario{
+  background:#fff;
+  color:#db2777;
+  border:2px solid #db2777;
+}
+.btn.secundario:hover{background:#fdf2f8;}
+
+/* === AREA A4 (oculta na tela, usada so na impressao) === */
+.area-impressao{
+  display:none;
+}
+.grade{display:grid;width:100%;height:100%;gap:0;}
+
+.placa{
+  border:2px solid #000;
+  padding:4px 5px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  align-items:center;
+  position:relative;
+  overflow:hidden;
+  background:#fff;
+}
+.placa.vazia{background:#fff;}
+
+.cabecalho{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  padding-top:2px;
+}
+
+.nome{
+  width:100%;
+  font-weight:900;
+  text-transform:uppercase;
+  text-align:center;
+  letter-spacing:.5px;
+  word-break:break-word;
+  line-height:1.12;
+  position:relative;
+  color:#111;
+}
+
+.marca{
+  width:100%;
+  display:inline-block;
+  padding:3px 10px;
+  border:2px solid #000;
+  font-family:Arial,Helvetica,sans-serif;
+  font-weight:900;
+  font-style:italic;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  text-align:center;
+  color:#1a1a1a;
+  white-space:nowrap;
+  line-height:1.2;
+}
+
+.valor{
+  flex:1;
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.etiqueta{
+  display:inline-block;
+  font-weight:900;
+  color:#000;
+  background:#fff;
+  border:3px solid #000;
+  border-radius:8px;
+  padding:4px 16px;
+  line-height:1;
+  text-align:center;
+  white-space:nowrap;
+  max-width:100%;
+  overflow:hidden;
+  -webkit-print-color-adjust:exact;
+  print-color-adjust:exact;
+}
+.etiqueta .rs{font-size:.72em;font-weight:900;margin-right:.12em;}
+
+.peso{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-top:2px;
+  margin-bottom:4px;
+  aspect-ratio:1/1;
+  border-radius:50%;
+  background:#fff;
+  border:2.5px solid #000;
+  color:#000;
+  font-weight:900;
+  white-space:nowrap;
+  padding:0 16px;
+  box-sizing:border-box;
+  -webkit-print-color-adjust:exact;
+  print-color-adjust:exact;
+}
+
+/* === LAYOUTS EXATOS - NADA SOBRA, NADA VAI OUTRA FOLHA === */
+.qtd-12{grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(4,1fr);height:100%;}
+.qtd-12 .nome{font-size:20px;}
+.qtd-12 .marca{font-size:19px;letter-spacing:2px;}
+.qtd-12 .etiqueta{font-size:60px;padding:1px 8px;}
+.qtd-12 .peso{font-size:18px;}
+
+.qtd-8{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(4,1fr);height:100%;}
+.qtd-8 .nome{font-size:25px;}
+.qtd-8 .marca{font-size:24px;letter-spacing:2.5px;}
+.qtd-8 .etiqueta{font-size:80px;padding:4px 18px;}
+.qtd-8 .peso{font-size:22px;}
+
+.qtd-6{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(3,1fr);height:100%;}
+.qtd-6 .nome{font-size:30px;}
+.qtd-6 .marca{font-size:28px;letter-spacing:3px;}
+.qtd-6 .etiqueta{font-size:100px;padding:6px 22px;}
+.qtd-6 .peso{font-size:28px;}
+
+.qtd-2{grid-template-columns:1fr;grid-template-rows:1fr 1fr;height:100%;}
+.qtd-2 .nome{font-size:40px;}
+.qtd-2 .marca{font-size:36px;letter-spacing:4px;}
+.qtd-2 .etiqueta{font-size:140px;padding:12px 32px;}
+.qtd-2 .peso{font-size:38px;}
+
+/* === RESPONSIVO CELULAR === */
+@media (max-width:600px){
+  body{padding:10px;}
+  .app-topo h1{font-size:22px;}
+  .app-topo .selo{width:48px;height:48px;font-size:19px;}
+  .grid2{grid-template-columns:1fr;}
+  .chips{overflow-x:auto;padding-bottom:2px;}
+  .chip{flex:1 0 64px;}
+}
+
+/* === IMPRESSAO === */
+@media print{
+  html,body{
+    width:210mm;height:297mm;
+    margin:0;padding:0;
+    background:white;
+  }
+  .app-topo, .controles{display:none !important;}
+  .area-impressao{
+    display:block;
+    margin:0;
+    padding:4mm;
+    width:210mm;
+    height:297mm;
+    border-radius:0;
+    box-shadow:none;
+  }
+  .placa{border:2px solid #000;}
+  @page{
+    size:A4 portrait;
+    margin:0;
+    orphans:1;
+    widows:1;
+  }
+}
+</style>
+</head>
+<body>
+
+<header class="app-topo">
+  <div class="selo">R$</div>
+  <h1>Placas de Preço</h1>
+  <p>Monte suas placas e imprima em A4</p>
+</header>
+
+<div class="controles">
+  <label class="rotulo">Quantidade de placas</label>
+  <div class="chips" id="chipsQtd">
+    <button class="chip ativo" onclick="mudarQtd(12,this)">12</button>
+    <button class="chip" onclick="mudarQtd(8,this)">8</button>
+    <button class="chip" onclick="mudarQtd(6,this)">6</button>
+    <button class="chip" onclick="mudarQtd(2,this)">2</button>
+  </div>
+
+  <div id="campos"></div>
+
+  <button class="btn primario" onclick="window.print()">Salvar em PDF</button>
+  <button class="btn secundario" onclick="window.print()">Imprimir</button>
+  <p style="font-size:12px;color:#94a3b8;margin-top:8px;text-align:center;">Na janela que abrir, escolha "Salvar como PDF" (para guardar e imprimir depois) ou sua impressora.</p>
+</div>
+
+<div class="area-impressao">
+  <div class="grade" id="grade"></div>
+</div>
+
+<script>
+let qtd = 12;
+
+function mudarQtd(n, el){
+  qtd = n;
+  document.querySelectorAll('#chipsQtd .chip').forEach(c=>c.classList.remove('ativo'));
+  el.classList.add('ativo');
+  ajustarLayout();
+}
+
+function setUnidade(el, u){
+  const box = el.closest('.medida-box');
+  box.querySelectorAll('.seg-p').forEach(b=>b.classList.remove('ativo'));
+  el.classList.add('ativo');
+  const inp = box.querySelector('input');
+  inp.dataset.unid = u;
+  inp.placeholder = u === 'g' ? 'Ex.: 500' : 'Ex.: 750';
+  const ubox = box.querySelector('.unid');
+  if(ubox) ubox.textContent = u;
+  posicionarUnidade(inp);
+}
+
+function posicionarUnidade(inp){
+  const ubox = inp.closest('.medida-box').querySelector('.unid');
+  if(!ubox) return;
+  if(!inp.value){
+    ubox.style.display = 'none';
+    return;
+  }
+  const c = document.createElement('canvas').getContext('2d');
+  const cs = getComputedStyle(inp);
+  c.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+  const w = c.measureText(inp.value.toUpperCase()).width;
+  const pl = parseFloat(cs.paddingLeft) || 0;
+  ubox.textContent = inp.dataset.unid;
+  ubox.style.display = 'block';
+  ubox.style.left = (pl + w + 2) + 'px';
+}
+
+function ajustarLayout(){
+  const area = document.getElementById('campos');
+  area.innerHTML = '';
+  for(let i=1;i<=qtd;i++){
+    area.innerHTML += `
+    <div class="placa-campo">
+      <div class="placa-titulo">Placa ${i}</div>
+      <div class="grid2">
+        <input placeholder="Produto" id="p${i}_n">
+        <input placeholder="Marca" class="inp-marca" id="p${i}_m">
+      </div>
+      <div class="grid2">
+        <input placeholder="Preço (R$ 9,90)" id="p${i}_v" inputmode="decimal" oninput="filtrarPreco(this)">
+        <div class="medida-box">
+          <div class="seg-pequeno">
+            <button class="seg-p ativo" onclick="setUnidade(this,'g')">g</button>
+            <button class="seg-p" onclick="setUnidade(this,'ml')">ml</button>
+          </div>
+          <div class="input-wrap">
+            <input placeholder="Ex.: 500" id="p${i}_p" data-unid="g" inputmode="numeric" oninput="filtrarMedida(this)">
+            <span class="unid">g</span>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }
+}
+
+function esc(t){
+  const d = document.createElement('div');
+  d.textContent = t;
+  return d.innerHTML;
+}
+
+function renderizar(){
+  const grade = document.getElementById('grade');
+  grade.className = `grade qtd-${qtd}`;
+  grade.innerHTML = '';
+  for(let i=1;i<=qtd;i++){
+    const n = (document.getElementById(`p${i}_n`)?.value || '').trim();
+    const m = (document.getElementById(`p${i}_m`)?.value || '').trim();
+    const v = (document.getElementById(`p${i}_v`)?.value || '').trim();
+    const p = (document.getElementById(`p${i}_p`)?.value || '').trim();
+    const sufixo = document.getElementById(`p${i}_p`)?.dataset.unid || 'g';
+
+    let html = '';
+    if(n || m){
+      html += '<div class="cabecalho">';
+      if(n) html += `<div class="nome">${esc(n)}</div>`;
+      if(m) html += `<div class="marca">${esc(m)}</div>`;
+      html += '</div>';
+    }
+    if(v) html += `<div class="valor"><span class="etiqueta"><span class="rs">R$</span> ${esc(v)}</span></div>`;
+    if(p) html += `<div class="peso">${esc(p)}${esc(sufixo)}</div>`;
+
+    grade.innerHTML += `<div class="placa${html ? '' : ' vazia'}">${html}</div>`;
+  }
+  ajustarTamanhos();
+}
+
+function maxFonte(txt, disp){
+  const c = document.createElement('canvas').getContext('2d');
+  let lo = 8, hi = 400;
+  while(lo < hi){
+    const mid = Math.ceil((lo + hi + 1) / 2);
+    c.font = '900 ' + mid + 'px Arial';
+    if(c.measureText(txt).width <= disp) lo = mid; else hi = mid - 1;
+  }
+  return lo;
+}
+
+function larguraDisponivelPreco(){
+  const mm2px = 96 / 25.4;
+  const cols = {12:3, 8:2, 6:2, 2:1}[qtd];
+  const sobras = {12:36, 8:56, 6:64, 2:84}[qtd];
+  return Math.round((202 / cols) * mm2px - sobras);
+}
+
+function ajustarTamanhos(){
+  const disp = larguraDisponivelPreco();
+  const hcap = {12:130, 8:180, 6:230, 2:360}[qtd];
+  document.querySelectorAll('.etiqueta').forEach(e=>{
+    let f = Math.min(maxFonte(e.textContent, disp), hcap);
+    e.style.fontSize = f + 'px';
+    const pp = e.parentElement;
+    const reservado = parseFloat(getComputedStyle(pp).paddingTop) + parseFloat(getComputedStyle(pp).paddingBottom);
+    if(pp.clientHeight > 0){
+      while(e.offsetHeight > pp.clientHeight - reservado && f > 10){
+        f -= 1;
+        e.style.fontSize = f + 'px';
+      }
+    }
+  });
+  document.querySelectorAll('.nome, .marca').forEach(e=>{
+    const base = parseFloat(getComputedStyle(e).fontSize);
+    let f = base;
+    e.style.fontSize = f + 'px';
+    while(e.scrollWidth > e.clientWidth + 2 && f > 7){
+      f -= 1;
+      e.style.fontSize = f + 'px';
+    }
+    while(e.scrollWidth + 2 < e.clientWidth && f < base * 1.5){
+      f += 1;
+      e.style.fontSize = f + 'px';
+    }
+  });
+  document.querySelectorAll('.peso').forEach(e=>{
+    let f = parseFloat(getComputedStyle(e).fontSize);
+    e.style.fontSize = f + 'px';
+    while(e.scrollWidth > e.clientWidth + 2 && f > 8){
+      f -= 1;
+      e.style.fontSize = f + 'px';
+    }
+  });
+}
+
+function filtrarMedida(el){
+  el.value = el.value.replace(/[^0-9,.\/]/g,'');
+  posicionarUnidade(el);
+}
+
+function filtrarPreco(el){
+  el.value = el.value.replace(/[^0-9,.]/g,'');
+}
+
+window.onload = function(){
+  ajustarLayout();
+};
+
+window.addEventListener('beforeprint', function(){
+  renderizar();
+});
+window.addEventListener('afterprint', function(){
+  if(document.getElementById('grade').children.length) ajustarTamanhos();
+});
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  });
+}
+</script>
+
+</body>
+</html>
