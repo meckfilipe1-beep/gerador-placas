@@ -420,15 +420,16 @@ body{
 
   <div id="campos"></div>
 
-  <button class="btn primario" onclick="window.print()">Salvar em PDF</button>
+  <button class="btn primario" onclick="salvarPDF()">Salvar em PDF</button>
   <button class="btn secundario" onclick="window.print()">Imprimir</button>
-  <p style="font-size:12px;color:#94a3b8;margin-top:8px;text-align:center;">Na janela que abrir, escolha "Salvar como PDF" (para guardar e imprimir depois) ou sua impressora.</p>
+  <p style="font-size:12px;color:#94a3b8;margin-top:8px;text-align:center;">"Salvar em PDF" baixa o arquivo direto. "Imprimir" abre a janela de impressão do aparelho.</p>
 </div>
 
 <div class="area-impressao">
   <div class="grade" id="grade"></div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
 let qtd = 12;
 
@@ -591,6 +592,51 @@ function filtrarMedida(el){
 
 function filtrarPreco(el){
   el.value = el.value.replace(/[^0-9,.]/g,'');
+}
+
+function salvarPDF(){
+  if(typeof html2pdf === 'undefined'){
+    window.print();
+    return;
+  }
+  renderizar();
+  ajustarTamanhos();
+  const area = document.querySelector('.area-impressao');
+  area.style.display = 'block';
+  area.style.position = 'fixed';
+  area.style.left = '-10000px';
+  area.style.top = '0';
+  area.style.width = '794px';
+  area.style.height = '1123px';
+  document.querySelectorAll('.peso').forEach(p=>{ p.style.height = p.offsetWidth + 'px'; });
+  html2pdf()
+    .set({
+      margin: 0,
+      filename: 'placas-preco.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+    })
+    .from(area)
+    .save()
+    .then(()=>{
+      document.querySelectorAll('.peso').forEach(p=>{ p.style.height = ''; });
+      area.style.display = 'none';
+      area.style.position = '';
+      area.style.left = '';
+      area.style.top = '';
+      area.style.width = '';
+      area.style.height = '';
+    })
+    .catch(()=>{
+      document.querySelectorAll('.peso').forEach(p=>{ p.style.height = ''; });
+      area.style.display = 'none';
+      area.style.position = '';
+      area.style.left = '';
+      area.style.top = '';
+      area.style.width = '';
+      area.style.height = '';
+    });
 }
 
 window.onload = function(){
