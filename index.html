@@ -432,7 +432,8 @@ body{
   <div class="grade" id="grade"></div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 let qtd = 12;
 
@@ -598,7 +599,8 @@ function filtrarPreco(el){
 }
 
 function salvarPDF(){
-  if (typeof html2pdf === 'undefined') {
+  const PDFLib = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+  if(typeof htmlToImage === 'undefined' || typeof PDFLib === 'undefined'){
     alert('Carregando recursos... Tente novamente em instantes!');
     return;
   }
@@ -607,7 +609,6 @@ function salvarPDF(){
   ajustarTamanhos();
 
   const area = document.querySelector('.area-impressao');
-  
   area.style.display = 'block';
   area.style.position = 'fixed';
   area.style.left = '0';
@@ -618,49 +619,22 @@ function salvarPDF(){
   area.style.margin = '0';
   area.style.padding = '4mm';
   area.style.background = '#fff';
-
   document.querySelectorAll('.peso').forEach(p => {
     p.style.height = p.offsetWidth + 'px';
   });
 
-  const opcoes = {
-    margin: 0,
-    filename: 'placas-preco.pdf',
-    image: { type: 'jpeg', quality: 1 },
-    html2canvas: {
-      scale: 3,
-      useCORS: true,
-      backgroundColor: '#ffffff',
-      scrollX: 0,
-      scrollY: 0,
-      windowWidth: area.offsetWidth,
-      windowHeight: area.offsetHeight
-    },
-    jsPDF: {
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4',
-      compress: true
-    }
-  };
-
-  html2pdf().set(opcoes).from(area).save()
-    .then(() => {
-      document.querySelectorAll('.peso').forEach(p => p.style.height = '');
-      area.style.display = '';
-      area.style.position = '';
-      area.style.left = '';
-      area.style.top = '';
-      area.style.zIndex = '';
-      area.style.width = '';
-      area.style.height = '';
-      area.style.margin = '';
-      area.style.padding = '';
-      area.style.background = '';
+  new Promise(r => setTimeout(r, 150))
+    .then(() => htmlToImage.toJpeg(area, { backgroundColor: '#ffffff', quality: 0.95, pixelRatio: 2 }))
+    .then(dataUrl => {
+      const pdf = new PDFLib({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      pdf.addImage(dataUrl, 'JPEG', 0, 0, 210, 297);
+      pdf.save('placas-preco.pdf');
     })
     .catch(erro => {
       console.error('Erro ao gerar PDF:', erro);
       alert('Se der erro, use o botão "Imprimir" e escolha "Salvar como PDF" na janela que abrir!');
+    })
+    .finally(() => {
       document.querySelectorAll('.peso').forEach(p => p.style.height = '');
       area.style.display = '';
       area.style.position = '';
